@@ -9,7 +9,7 @@ import { RoundedButton } from '../../components/RoundedButton';
 import { Timing } from './Timing';
 
 const DEFAULT_TIME = 0.1;
-export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
+export const Timer = ({ focusSubject, onTimerEnd, clearSubject,scheduleNotification }) => {
   useKeepAwake();
 
   const interval = React.useRef(null);
@@ -32,6 +32,7 @@ export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
 
   const onEnd = () => {
     vibrate();
+    scheduleNotification(0);
     setMinutes(DEFAULT_TIME), setProgress(1);
     setIsStarted(false);
     onTimerEnd();
