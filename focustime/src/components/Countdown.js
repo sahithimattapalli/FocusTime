@@ -23,11 +23,18 @@ export const Countdown = ({
         return time;
       }
       const timeLeft = time - 1000;
-      onProgress(timeLeft / minTomillis(minutes));
+      
       return timeLeft;
 
     })
   }
+  useEffect(() => {
+    onProgress(millis / minTomillis(minutes));
+    // if(millis === 0){
+    //   onEnd();
+    // }
+  },[millis]);
+
 
 useEffect(() =>{
   setMillis(minTomillis(minutes))

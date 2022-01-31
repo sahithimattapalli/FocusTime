@@ -7,7 +7,8 @@ import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
 import { Notification } from 'expo-notifications';
 import { FocusHistory } from './src/features/focus/FocusHistory';
-
+import { addFocusHistorytoFirebase } from './src/features/focus/focusapi';
+import { LogBox } from 'react-native';
 
 const STATUSES = {
   COMPLETE: 1,
@@ -15,6 +16,9 @@ const STATUSES = {
 };
 
 export default function App() {
+
+  LogBox.ignoreWarnings;
+
   const [focusSubject, setFocusSubject] = useState(null);
   const [focusHistory, setFocusHistory] = useState([]);
   const [notificationPermissions, setNotificationPermissions] = useState(
@@ -63,6 +67,11 @@ export default function App() {
   }, [notificationPermissions]);
 
 // ///////////////////////
+const onSubjectAdded = (subject) =>{
+  console.log("Sub added");
+  console.log(subject);
+}
+
 const addFocusHistory = (subject, status) => {
   setFocusHistory([...focusHistory, {key: String(focusHistory.length + 1),subject,status}]);
 };
@@ -80,10 +89,18 @@ setFocusHistory([]);
         onTimerEnd={() => {
           setFocusSubject(null);
           addFocusHistory(focusSubject, STATUSES.COMPLETE);
+          addFocusHistorytoFirebase({
+            subject: focusSubject,
+            status: STATUSES.COMPLETE,
+          }, onSubjectAdded);
         }}
           
         clearSubject={() => {
           addFocusHistory(focusSubject, STATUSES.CANCELLED);
+          addFocusHistorytoFirebase({
+            subject: focusSubject,
+            status: STATUSES.CANCELLED,
+          }, onSubjectAdded);
           setFocusSubject(null);
         }}
         scheduleNotification = {scheduleNotification  }
